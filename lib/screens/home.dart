@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:touchstoneassignment/constant/constant.dart';
 import 'package:touchstoneassignment/screens/bedPage.dart';
+import 'package:touchstoneassignment/screens/profile.dart';
 import 'package:touchstoneassignment/widgets/bottomNavBar.dart';
 import 'dart:math' as math;
 
@@ -54,10 +55,27 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           Positioned(
               top: 32,
               right: 24,
-              child: CircleAvatar(
-                radius: 32,
-                backgroundColor: Colors.white,
-                child: SvgPicture.asset('assets/images/bathtube.svg'),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(
+                    PageRouteBuilder(
+                        pageBuilder: (context, animation, _) {
+                          return ProfilePage();
+                        },
+                        transitionsBuilder: (context, animation, _, child) {
+                          return FadeTransition(
+                            opacity: animation,
+                            child: child,
+                          );
+                        },
+                        transitionDuration: const Duration(milliseconds: 500)),
+                  );
+                },
+                child: CircleAvatar(
+                  radius: 32,
+                  backgroundColor: Colors.white,
+                  child: SvgPicture.asset('assets/images/bathtube.svg'),
+                ),
               )),
           Positioned(
             bottom: 0,
