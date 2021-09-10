@@ -33,7 +33,7 @@ class RoomHeader extends StatelessWidget {
           )
         ],
       ),
-      width: size.width * 0.3,
+      width: 100,
     );
   }
 }

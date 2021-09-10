@@ -20,8 +20,8 @@ class LightList extends StatelessWidget {
         physics: BouncingScrollPhysics(),
         children: [
           Container(
-            width: size.width * 0.3,
-            margin: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+            margin: EdgeInsets.only(left: 32, right: 8, top: 8, bottom: 8),
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               color: Colors.white,
@@ -33,6 +33,9 @@ class LightList extends StatelessWidget {
                   'assets/images/mainLight.svg',
                   color: Colors.indigo[900],
                 ),
+                SizedBox(
+                  width: 8,
+                ),
                 Text(
                   'Main Light',
                   style: TextStyle(
@@ -42,8 +45,8 @@ class LightList extends StatelessWidget {
             ),
           ),
           Container(
-            width: size.width * 0.3,
             margin: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               color: Colors.indigo[900],
@@ -55,6 +58,9 @@ class LightList extends StatelessWidget {
                   'assets/images/desk.svg',
                   color: Colors.white,
                 ),
+                SizedBox(
+                  width: 8,
+                ),
                 Text(
                   'Desk Light',
                   style: TextStyle(
@@ -64,8 +70,8 @@ class LightList extends StatelessWidget {
             ),
           ),
           Container(
-            width: size.width * 0.3,
             margin: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               color: Colors.white,
@@ -76,6 +82,9 @@ class LightList extends StatelessWidget {
                 SvgPicture.asset(
                   'assets/images/bedlight.svg',
                   color: Colors.indigo[900],
+                ),
+                SizedBox(
+                  width: 8,
                 ),
                 Text(
                   'Bed Light',

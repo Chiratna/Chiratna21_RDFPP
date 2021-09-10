@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:touchstoneassignment/screens/home.dart';
+import 'package:touchstoneassignment/screens/homeScreen.dart';
 
 void main() {
   runApp(MyApp());
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: Home(),
+      home: HomeScreen(),
     );
   }
 }

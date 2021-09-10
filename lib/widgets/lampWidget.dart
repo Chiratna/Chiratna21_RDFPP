@@ -4,18 +4,16 @@ import 'package:flutter_svg/svg.dart';
 class LampWidget extends StatelessWidget {
   const LampWidget({
     Key? key,
-    required this.size,
     required this.bright,
   }) : super(key: key);
 
-  final Size size;
   final Color bright;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: size.height * 0.22,
-      height: size.height * 0.22,
+      width: 150,
+      height: 170,
       margin: EdgeInsets.only(right: 16),
       //key: UniqueKey(),
       child: Stack(

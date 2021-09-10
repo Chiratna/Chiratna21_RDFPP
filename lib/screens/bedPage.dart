@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+//import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:touchstoneassignment/constant/constant.dart';
 import 'package:touchstoneassignment/widgets/bottomNavBar.dart';
@@ -29,6 +30,7 @@ class _RoomState extends State<Room> with SingleTickerProviderStateMixin {
   Animation<double>? translateTween;
   double value = 1;
   Color lampColor = Colors.amber;
+  bool powerOn = true;
   @override
   void initState() {
     _controller = AnimationController(
@@ -73,30 +75,18 @@ class _RoomState extends State<Room> with SingleTickerProviderStateMixin {
     return stackLayers;
   }
 
-  List<Widget> scenePicker(double factor, Size size) {
-    double top = 1;
-    double right = size.width - 120 - 64;
+  List<Widget> scenePicker() {
     List<Widget> stackLayers =
         List<Widget>.generate(scenceGradients.length, (index) {
-      if (index % 2 == 0) {
-        if (index == 0)
-          top = 0;
-        else
-          top += kBottomNavigationBarHeight + 16;
-        right = size.width - 120 - 64;
-      } else {
-        right = (1 - factor) * right;
-      }
-
-      return Positioned(
-        top: top,
-        right: right,
+      return Container(
+        width: 130,
+        height: kBottomNavigationBarHeight,
         child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
           decoration: BoxDecoration(
             gradient: scenceGradients[index]['gradient'],
             borderRadius: BorderRadius.circular(8),
           ),
-          width: 120,
           height: kBottomNavigationBarHeight,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -129,193 +119,238 @@ class _RoomState extends State<Room> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: Colors.blue[900],
+      backgroundColor: Colors.white,
       bottomNavigationBar: BottomNavBar(),
-      body: Stack(
-        children: [
-          Positioned(
-            left: -size.width * 0.25,
-            top: -size.height * 0.25,
-            child: TweenAnimationBuilder<double>(
-              duration: const Duration(milliseconds: 500),
-              tween: Tween<double>(begin: 18, end: 3),
-              builder: (_, angle, child) {
-                return Transform.rotate(
-                  angle: -math.pi / angle,
-                  child: child,
-                );
-              },
-              child: SvgPicture.asset('assets/images/Circles.svg'),
-            ),
-          ),
-          Positioned(
-            bottom: 0,
-            child: TweenAnimationBuilder<double>(
-              duration: const Duration(milliseconds: 600),
-              tween: Tween<double>(begin: 0.8, end: 0.65),
-              builder: (_, height, child) {
-                return Container(
-                  height: size.height * height - kBottomNavigationBarHeight,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(32),
-                        topRight: Radius.circular(32),
-                      )),
+      body: SafeArea(
+          child: CustomScrollView(
+        shrinkWrap: true,
+        physics: BouncingScrollPhysics(),
+        slivers: [
+          TweenAnimationBuilder<double>(
+            tween: Tween<double>(begin: 150, end: 300),
+            duration: const Duration(milliseconds: 500),
+            builder: (_, he, child) {
+              // return SliverAppBar(
+              //   backgroundColor: Colors.blue[900],
+              //   automaticallyImplyLeading: false,
+              //   expandedHeight: he,
+              //   pinned: false,
+              //   stretch: true,
+              //   onStretchTrigger: () async {
+              //     print('Hell0');
+              //   },
+              //   bottom: PreferredSize(
+              //     child: Container(),
+              //     preferredSize: Size(0, 20),
+              //   ),
+              //   flexibleSpace:
+              // );
+
+              return SliverToBoxAdapter(
+                child: Container(
+                  height: he,
+                  color: Colors.blue[900],
                   width: size.width,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TextHeader(header: 'Intensity'),
-                      BrightnessSlider(
-                        color: lampColor,
-                        size: size,
-                        value: value,
-                        child: Slider(
-                          max: 1,
-                          min: 0,
-                          value: value,
-                          onChanged: (d) {
-                            setState(() {
-                              value = d;
-                            });
-                          },
-                        ),
-                      ),
-                      TextHeader(
-                        header: 'Colors',
-                      ),
-                      AnimatedBuilder(
-                          animation: translateTween!,
-                          builder: (_, child) {
-                            return Container(
-                              margin: EdgeInsets.only(left: 32),
-                              width: size.width,
-                              child: Stack(
-                                children:
-                                    colorPicker(translateTween!.value * 2.5),
-                              ),
-                            );
-                          }),
-                      TextHeader(header: 'Scenes'),
-                      Expanded(
-                        child: Container(
-                          width: size.width,
-                          child: Center(
-                            child: AnimatedBuilder(
-                                animation: translateTween!,
-                                builder: (_, child) {
-                                  return Container(
-                                    margin:
-                                        EdgeInsets.only(left: 32, right: 32),
-                                    width: size.width,
-                                    child: Stack(
-                                      children: scenePicker(
-                                          translateTween!.value, size),
-                                    ),
-                                  );
-                                }),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-          Positioned(
-            right: 0,
-            top: -40,
-            child: AnimatedBuilder(
-              animation: translateTween!,
-              builder: (_, child) {
-                return Transform.translate(
-                  offset: Offset(0, 40 * translateTween!.value),
                   child: child,
-                );
-              },
-              child:
-                  LampWidget(size: size, bright: lampColor.withOpacity(value)),
-            ),
-          ),
-          Positioned(
-            top: 24,
-            left: 16,
-            child: GestureDetector(
-              onTap: () {
-                Navigator.of(context).pop();
-              },
-              child: Container(
-                height: size.height * 0.2,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    RoomHeader(size: size, s: '${widget.title}'),
-                    AnimatedBuilder(
+                ),
+              );
+            },
+            child: Stack(
+              children: [
+                Positioned(
+                  left: -size.width * 0.25,
+                  top: -size.height * 0.25,
+                  child: TweenAnimationBuilder<double>(
+                    duration: const Duration(milliseconds: 500),
+                    tween: Tween<double>(begin: 18, end: 3),
+                    builder: (_, angle, child) {
+                      return Transform.rotate(
+                        angle: -math.pi / angle,
+                        child: child,
+                      );
+                    },
+                    child: SvgPicture.asset('assets/images/Circles.svg'),
+                  ),
+                ),
+                // Positioned(top: 24, left: 16, child: HomeHeader(size: size)),
+                Positioned(
+                  right: 0,
+                  top: -40,
+                  child: AnimatedBuilder(
+                    animation: translateTween!,
+                    builder: (_, child) {
+                      return Transform.translate(
+                        offset: Offset(0, 40 * translateTween!.value),
+                        child: child,
+                      );
+                    },
+                    child: LampWidget(bright: lampColor.withOpacity(value)),
+                  ),
+                ),
+                Positioned(
+                  top: 24,
+                  left: 16,
+                  child: GestureDetector(
+                    onTap: () {
+                      _controller!.reverse();
+                      Navigator.of(context).pop();
+                    },
+                    child: Container(
+                      height: 150,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          RoomHeader(size: size, s: '${widget.title}'),
+                          AnimatedBuilder(
+                            animation: translateTween!,
+                            builder: (_, child) {
+                              return Transform.translate(
+                                offset: Offset(0, 16 * translateTween!.value),
+                                child: Opacity(
+                                  opacity: translateTween!.value,
+                                  child: child,
+                                ),
+                              );
+                            },
+                            child: Text(
+                              widget.lights,
+                              style: TextStyle(
+                                color: Colors.amber[400],
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Spacer(),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 180,
+                  child: AnimatedBuilder(
                       animation: translateTween!,
                       builder: (_, child) {
                         return Transform.translate(
-                          offset: Offset(0, 16 * translateTween!.value),
+                          offset: Offset(
+                              size.width * 0.3 * (1 - translateTween!.value),
+                              0),
                           child: Opacity(
                             opacity: translateTween!.value,
                             child: child,
                           ),
                         );
                       },
-                      child: Text(
-                        widget.lights,
-                        style: TextStyle(
-                          color: Colors.amber[400],
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      child: LightList(size: size)),
+                ),
+
+                Positioned(
+                  child: Container(
+                    height: 30,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(50),
                       ),
                     ),
-                    Spacer(),
-                  ],
+                  ),
+                  bottom: -1,
+                  left: 0,
+                  right: 0,
                 ),
+                Positioned(
+                  bottom: 8,
+                  right: 32,
+                  child: AnimatedBuilder(
+                    animation: translateTween!,
+                    builder: (_, child) {
+                      return Opacity(
+                        opacity: translateTween!.value,
+                        child: child,
+                      );
+                    },
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          powerOn = !powerOn;
+                          value = powerOn ? 1 : 0;
+                        });
+                      },
+                      child: CircleAvatar(
+                          backgroundColor: Colors.white,
+                          child: SvgPicture.asset(
+                            'assets/images/iconawesomepoweroff.svg',
+                            color: powerOn ? Colors.red : Colors.grey,
+                          )),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: TextHeader(header: 'Intensity'),
+          ),
+          SliverToBoxAdapter(
+            child: BrightnessSlider(
+              color: lampColor,
+              size: size,
+              value: value,
+              child: Slider(
+                max: 1,
+                min: 0,
+                value: value,
+                onChanged: (d) {
+                  setState(() {
+                    value = d;
+                  });
+                },
               ),
             ),
           ),
-          Positioned(
-            top: size.height * 0.24,
-            left: 32,
-            child: AnimatedBuilder(
-                animation: translateTween!,
-                builder: (_, child) {
-                  return Transform.translate(
-                    offset: Offset(
-                        size.width * 0.3 * (1 - translateTween!.value), 0),
-                    child: Opacity(
-                      opacity: translateTween!.value,
-                      child: child,
-                    ),
-                  );
-                },
-                child: LightList(size: size)),
+          SliverToBoxAdapter(
+            child: TextHeader(header: 'Colors'),
           ),
-          Positioned(
-            top: size.height * 0.33,
-            right: 40,
-            child: AnimatedBuilder(
+          AnimatedBuilder(
               animation: translateTween!,
               builder: (_, child) {
-                return Opacity(
-                  opacity: translateTween!.value,
-                  child: child,
+                return SliverToBoxAdapter(
+                  child: Container(
+                    margin: EdgeInsets.only(left: 32),
+                    width: size.width,
+                    child: Stack(
+                      children: colorPicker(translateTween!.value * 2.5),
+                    ),
+                  ),
                 );
-              },
-              child: CircleAvatar(
-                  backgroundColor: Colors.white,
-                  child: SvgPicture.asset(
-                    'assets/images/iconawesomepoweroff.svg',
-                    color: Colors.red,
-                  )),
+              }),
+          SliverToBoxAdapter(
+            child: TextHeader(header: 'Scenes'),
+          ),
+          AnimatedBuilder(
+            animation: translateTween!,
+            builder: (_, child) {
+              return SliverToBoxAdapter(
+                child: Container(
+                  width: size.width,
+                  margin: EdgeInsets.symmetric(horizontal: 24),
+                  child: Wrap(
+                      alignment: WrapAlignment.start,
+                      spacing: (size.width - 48 - 260) * translateTween!.value,
+                      runSpacing: 32,
+                      children: scenePicker()),
+                ),
+              );
+            },
+          ),
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 32,
             ),
           )
         ],
-      ),
+      )),
     );
   }
 
