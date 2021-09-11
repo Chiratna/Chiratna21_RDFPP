@@ -28,7 +28,8 @@ class Room extends StatefulWidget {
 class _RoomState extends State<Room> with SingleTickerProviderStateMixin {
   AnimationController? _controller;
   Animation<double>? translateTween;
-  double value = 1;
+  ScrollController sc = ScrollController();
+  double value = 1, opValue = 1;
   Color lampColor = Colors.amber;
   bool powerOn = true;
   @override
@@ -40,6 +41,12 @@ class _RoomState extends State<Room> with SingleTickerProviderStateMixin {
 
     widget.animation.addStatusListener((status) {
       if (status == AnimationStatus.completed) _controller!.forward();
+    });
+
+    sc.addListener(() {
+      setState(() {
+        opValue = math.min(1, math.max(0, 1 - sc.offset / 170));
+      });
     });
 
     super.initState();
@@ -65,6 +72,9 @@ class _RoomState extends State<Room> with SingleTickerProviderStateMixin {
               )
             : GestureDetector(
                 onTap: () {
+                  sc.animateTo(0,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeIn);
                   setState(() {
                     lampColor = colors[index].withOpacity(value);
                   });
@@ -78,35 +88,46 @@ class _RoomState extends State<Room> with SingleTickerProviderStateMixin {
   List<Widget> scenePicker() {
     List<Widget> stackLayers =
         List<Widget>.generate(scenceGradients.length, (index) {
-      return Container(
-        width: 130,
-        height: kBottomNavigationBarHeight,
+      return GestureDetector(
+        onTap: () {
+          sc.animateTo(0,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeIn);
+
+          setState(() {
+            lampColor = scenceGradients[index]['lampcolor'].withOpacity(value);
+          });
+        },
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-          decoration: BoxDecoration(
-            gradient: scenceGradients[index]['gradient'],
-            borderRadius: BorderRadius.circular(8),
-          ),
+          width: 130,
           height: kBottomNavigationBarHeight,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SvgPicture.asset(
-                'assets/images/mainLight.svg',
-                color: Colors.white,
-              ),
-              SizedBox(
-                width: 16,
-              ),
-              Text(
-                scenceGradients[index]['title'],
-                style: TextStyle(
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            decoration: BoxDecoration(
+              gradient: scenceGradients[index]['gradient'],
+              borderRadius: BorderRadius.circular(8),
+            ),
+            height: kBottomNavigationBarHeight,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset(
+                  'assets/images/mainLight.svg',
                   color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
                 ),
-              )
-            ],
+                SizedBox(
+                  width: 16,
+                ),
+                Text(
+                  scenceGradients[index]['title'],
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       );
@@ -123,37 +144,21 @@ class _RoomState extends State<Room> with SingleTickerProviderStateMixin {
       bottomNavigationBar: BottomNavBar(),
       body: SafeArea(
           child: CustomScrollView(
-        shrinkWrap: true,
+        controller: sc,
+        //shrinkWrap: true,
         physics: BouncingScrollPhysics(),
         slivers: [
           TweenAnimationBuilder<double>(
             tween: Tween<double>(begin: 150, end: 300),
             duration: const Duration(milliseconds: 500),
             builder: (_, he, child) {
-              // return SliverAppBar(
-              //   backgroundColor: Colors.blue[900],
-              //   automaticallyImplyLeading: false,
-              //   expandedHeight: he,
-              //   pinned: false,
-              //   stretch: true,
-              //   onStretchTrigger: () async {
-              //     print('Hell0');
-              //   },
-              //   bottom: PreferredSize(
-              //     child: Container(),
-              //     preferredSize: Size(0, 20),
-              //   ),
-              //   flexibleSpace:
-              // );
-
-              return SliverToBoxAdapter(
-                child: Container(
-                  height: he,
-                  color: Colors.blue[900],
-                  width: size.width,
-                  child: child,
-                ),
-              );
+              return SliverAppBar(
+                  backgroundColor: Colors.blue[900],
+                  automaticallyImplyLeading: false,
+                  stretch: true,
+                  onStretchTrigger: () async {},
+                  expandedHeight: he,
+                  flexibleSpace: child);
             },
             child: Stack(
               children: [
@@ -184,11 +189,14 @@ class _RoomState extends State<Room> with SingleTickerProviderStateMixin {
                         child: child,
                       );
                     },
-                    child: LampWidget(bright: lampColor.withOpacity(value)),
+                    child: Opacity(
+                        opacity: opValue,
+                        child:
+                            LampWidget(bright: lampColor.withOpacity(value))),
                   ),
                 ),
                 Positioned(
-                  top: 24,
+                  bottom: 130,
                   left: 16,
                   child: GestureDetector(
                     onTap: () {
@@ -205,7 +213,7 @@ class _RoomState extends State<Room> with SingleTickerProviderStateMixin {
                             animation: translateTween!,
                             builder: (_, child) {
                               return Transform.translate(
-                                offset: Offset(0, 16 * translateTween!.value),
+                                offset: Offset(0, 8 * translateTween!.value),
                                 child: Opacity(
                                   opacity: translateTween!.value,
                                   child: child,
@@ -228,7 +236,7 @@ class _RoomState extends State<Room> with SingleTickerProviderStateMixin {
                   ),
                 ),
                 Positioned(
-                  top: 180,
+                  bottom: 56,
                   child: AnimatedBuilder(
                       animation: translateTween!,
                       builder: (_, child) {
@@ -319,8 +327,10 @@ class _RoomState extends State<Room> with SingleTickerProviderStateMixin {
                   child: Container(
                     margin: EdgeInsets.only(left: 32),
                     width: size.width,
-                    child: Stack(
-                      children: colorPicker(translateTween!.value * 2.5),
+                    child: Wrap(
+                      spacing: 16 * translateTween!.value,
+                      runSpacing: 16,
+                      children: colorPicker(0),
                     ),
                   ),
                 );

@@ -13,7 +13,8 @@ class LampWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 150,
-      height: 170,
+      height: 160,
+      //color: Colors.black,
       margin: EdgeInsets.only(right: 16),
       //key: UniqueKey(),
       child: Stack(
@@ -23,12 +24,13 @@ class LampWidget extends StatelessWidget {
             child: SvgPicture.asset(
               'assets/images/lightbulb.svg',
               color: bright,
-              fit: BoxFit.fitHeight,
             ),
           ),
           Positioned(
             top: 0,
-            child: SvgPicture.asset('assets/images/lightbulboutline.svg'),
+            child: SvgPicture.asset(
+              'assets/images/lightbulboutline.svg',
+            ),
           ),
         ],
       ),

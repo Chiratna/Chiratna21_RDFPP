@@ -57,6 +57,7 @@ List<Map<String, dynamic>> scenceGradients = [
       end: Alignment.bottomLeft,
     ),
     'title': 'Birthday',
+    'lampcolor': Colors.amber[600],
   },
   {
     'gradient': LinearGradient(
@@ -67,7 +68,8 @@ List<Map<String, dynamic>> scenceGradients = [
       begin: Alignment.topRight,
       end: Alignment.bottomLeft,
     ),
-    'title': 'Party'
+    'title': 'Party',
+    'lampcolor': Colors.purple[400],
   },
   {
     'gradient': LinearGradient(
@@ -79,16 +81,18 @@ List<Map<String, dynamic>> scenceGradients = [
       end: Alignment.bottomLeft,
     ),
     'title': 'Relax',
+    'lampcolor': Colors.blue[400],
   },
   {
     'gradient': LinearGradient(
       colors: [
         Colors.green[100]!,
-        Colors.green[300]!,
+        Colors.green[400]!,
       ],
       begin: Alignment.topRight,
       end: Alignment.bottomLeft,
     ),
-    'title': 'Fun'
+    'title': 'Fun',
+    'lampcolor': Colors.green[400],
   }
 ];

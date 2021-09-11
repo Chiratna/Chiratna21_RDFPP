@@ -14,6 +14,7 @@ class RoomHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: Wrap(
+        runSpacing: 8,
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 8.0, right: 8),
@@ -33,7 +34,7 @@ class RoomHeader extends StatelessWidget {
           )
         ],
       ),
-      width: 100,
+      width: size.width * 0.5 - 32,
     );
   }
 }

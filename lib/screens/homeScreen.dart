@@ -38,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 preferredSize: Size(0, 20),
               ),
               backgroundColor: Colors.blue[900],
-              expandedHeight: size.height * 0.25,
+              expandedHeight: 200,
               flexibleSpace: Stack(
                 children: [
                   Positioned(
@@ -49,9 +49,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: SvgPicture.asset('assets/images/Circles.svg'),
                     ),
                   ),
-                  Positioned(top: 24, left: 16, child: HomeHeader(size: size)),
                   Positioned(
-                      top: 32,
+                      bottom: 72, left: 16, child: HomeHeader(size: size)),
+                  Positioned(
+                      bottom: 80,
                       right: 24,
                       child: GestureDetector(
                         onTap: () {
@@ -94,41 +95,62 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
+            SliverToBoxAdapter(
+              child: Container(
+                  margin: EdgeInsets.only(
+                    left: 32,
+                    bottom: 16,
+                  ),
+                  child: Text(
+                    'All Rooms',
+                    style: TextStyle(
+                      color: Colors.blue[900],
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  )),
+            ),
             SliverGrid(
-                delegate: SliverChildBuilderDelegate((_, i) {
-                  i = i % 6;
-                  Map<String, dynamic> room = roomDetails(i);
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        PageRouteBuilder(
-                            pageBuilder: (context, animation, _) {
-                              return Room(
-                                animation: animation,
-                                title: room['title'],
-                                lights: room['lights'],
-                              );
-                            },
-                            transitionsBuilder: (context, animation, _, child) {
-                              return FadeTransition(
-                                opacity: animation,
-                                child: child,
-                              );
-                            },
-                            transitionDuration:
-                                const Duration(milliseconds: 500)),
-                      );
-                    },
-                    child: GridItem(room: room),
-                  );
-                }, childCount: 12),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 8,
-                  childAspectRatio: 0.7,
-                  mainAxisExtent: 200,
-                ))
+              delegate: SliverChildBuilderDelegate((_, i) {
+                i = i % 6;
+                Map<String, dynamic> room = roomDetails(i);
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      PageRouteBuilder(
+                          pageBuilder: (context, animation, _) {
+                            return Room(
+                              animation: animation,
+                              title: room['title'],
+                              lights: room['lights'],
+                            );
+                          },
+                          transitionsBuilder: (context, animation, _, child) {
+                            return FadeTransition(
+                              opacity: animation,
+                              child: child,
+                            );
+                          },
+                          transitionDuration:
+                              const Duration(milliseconds: 500)),
+                    );
+                  },
+                  child: GridItem(room: room),
+                );
+              }, childCount: 6),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 8,
+                childAspectRatio: 0.7,
+                mainAxisExtent: 200,
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Container(
+                height: 32,
+              ),
+            )
           ],
         ),
       ),

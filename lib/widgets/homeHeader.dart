@@ -19,7 +19,7 @@ class HomeHeader extends StatelessWidget {
           fontWeight: FontWeight.w800,
         ),
       ),
-      width: size.width * 0.3,
+      width: size.width * 0.5,
     );
   }
 }
